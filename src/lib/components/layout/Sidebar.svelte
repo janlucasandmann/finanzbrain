@@ -270,7 +270,8 @@
 			? ''
 			: 'invisible'}"
 	>
-		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400">
+
+		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400" style="padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
 			<a
 				id="sidebar-new-chat-button"
 				class="flex flex-1 justify-between rounded-xl px-2 h-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
@@ -288,15 +289,15 @@
 					}, 0);
 				}}
 			>
-				<div class="self-center mx-1.5">
+				<div class="self-center mx-1.5" style="display:none;">
 					<img
 						crossorigin="anonymous"
-						src="{WEBUI_BASE_URL}/static/favicon.png"
+						src="http://localhost:3000/favicon.png"
 						class=" size-6 -translate-x-1.5 rounded-full"
 						alt="logo"
 					/>
 				</div>
-				<div class=" self-center font-medium text-sm text-gray-850 dark:text-white font-primary">
+				<div style="font-size:22px" class=" self-center font-medium text-sm text-gray-850 dark:text-white font-primary">
 					{$i18n.t('New Chat')}
 				</div>
 				<div class="self-center ml-auto">
@@ -344,6 +345,7 @@
 		{#if $user?.role === 'admin'}
 			<div class="px-2.5 flex justify-center text-gray-800 dark:text-gray-200">
 				<a
+					style="margin-top:10px;"
 					class="flex-grow flex space-x-3 rounded-xl px-2.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
 					href="/workspace"
 					on:click={() => {

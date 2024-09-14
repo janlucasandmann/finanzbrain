@@ -265,7 +265,7 @@
 
 <FilesOverlay show={dragged} />
 
-<div class="w-full font-primary">
+<div class="w-full font-primary" style="background: #012B31 !important;">
 	<div class=" -mb-0.5 mx-auto inset-x-0 bg-transparent flex justify-center">
 		<div class="flex flex-col max-w-6xl px-2.5 md:px-6 w-full">
 			<div class="relative">
@@ -274,7 +274,7 @@
 						class=" absolute -top-12 left-0 right-0 flex justify-center z-30 pointer-events-none"
 					>
 						<button
-							class=" bg-white border border-gray-100 dark:border-none dark:bg-white/20 p-1.5 rounded-full pointer-events-auto"
+							class=" bg-white border dark:border-none dark:bg-white/20 p-1.5 rounded-full pointer-events-auto"
 							on:click={() => {
 								autoScroll = true;
 								scrollToBottom();
@@ -311,7 +311,7 @@
 									?.profile_image_url ??
 									($i18n.language === 'dg-DG'
 										? `/doge.png`
-										: `${WEBUI_BASE_URL}/static/favicon.png`)}
+										: `${WEBUI_BASE_URL}/favicon.png`)}
 							/>
 							<div>
 								Talking to <span class=" font-medium">{atSelectedModel.name}</span>
@@ -348,7 +348,7 @@
 		</div>
 	</div>
 
-	<div class="{transparentBackground ? 'bg-transparent' : 'bg-white dark:bg-gray-900'} ">
+	<div>
 		<div class="max-w-6xl px-2.5 md:px-6 mx-auto inset-x-0">
 			<div class=" pb-2">
 				<input
@@ -401,7 +401,7 @@
 						}}
 					>
 						<div
-							class="flex-1 flex flex-col relative w-full rounded-3xl px-1.5 bg-gray-50 dark:bg-gray-850 dark:text-gray-100"
+							class="message-container flex-1 flex flex-col relative w-full rounded-3xl px-1.5 bg-gray-50 dark:text-gray-100"
 							dir={$settings?.chatDirection ?? 'LTR'}
 						>
 							{#if files.length > 0}
@@ -441,7 +441,7 @@
 												</div>
 												<div class=" absolute -top-1 -right-1">
 													<button
-														class=" bg-gray-400 text-white border border-white rounded-full group-hover:visible invisible transition"
+														class="  text-white border border-white rounded-full group-hover:visible invisible transition"
 														type="button"
 														on:click={() => {
 															files.splice(fileIdx, 1);
@@ -502,7 +502,7 @@
 										}}
 									>
 										<button
-											class="bg-gray-50 hover:bg-gray-100 text-gray-800 dark:bg-gray-850 dark:text-white dark:hover:bg-gray-800 transition rounded-full p-2 outline-none focus:outline-none"
+											class="message-container-button hover:bg-gray-100 text-gray-800 dark:text-white dark:hover:bg-gray-800 transition rounded-full p-2 outline-none focus:outline-none"
 											type="button"
 											aria-label="More"
 										>
@@ -523,7 +523,7 @@
 								<textarea
 									id="chat-textarea"
 									bind:this={chatTextAreaElement}
-									class="scrollbar-hidden bg-gray-50 dark:bg-gray-850 dark:text-gray-100 outline-none w-full py-3 px-1 rounded-xl resize-none h-[48px]"
+									class="scrollbar-hidden dark:text-gray-100 outline-none w-full py-3 px-1 rounded-xl resize-none h-[48px]"
 									placeholder={chatInputPlaceholder !== ''
 										? chatInputPlaceholder
 										: $i18n.t('Send a Message')}

@@ -9,7 +9,9 @@ const packages = [
 	'scikit-learn',
 	'scipy',
 	'regex',
-	'seaborn'
+	'seaborn',
+	'smtplib',
+	'email',
 ];
 
 import { loadPyodide } from 'pyodide';

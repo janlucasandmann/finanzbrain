@@ -19,20 +19,33 @@
 </script>
 
 <!-- {JSON.stringify(tokens)} -->
+{#if tokens}
 {#each tokens as token, tokenIdx}
 	{#if token.type === 'hr'}
 		<hr />
+	{:else if token.text === '°'}
+		{@html "<a href='https://firechatbot.com'>FireChatbot</a>"}
 	{:else if token.type === 'heading'}
 		<svelte:element this={headerComponent(token.depth)}>
 			<MarkdownInlineTokens id={`${id}-${tokenIdx}-h`} tokens={token.tokens} />
 		</svelte:element>
 	{:else if token.type === 'code'}
-		<CodeBlock
-			id={`${id}-${tokenIdx}`}
-			{token}
-			lang={token?.lang ?? ''}
-			code={revertSanitizedResponseContent(token?.text ?? '')}
-		/>
+		{#if token.text.includes('°')}
+			{@html token.text.replace('°', '')}
+			<!--<div style='padding:10px; border-radius:10px; width: 100%; background-color: rgba(255,255,255,1); overflow: hidden;'>
+				<p style="font-size: 18px; font-weight: bold; margin: 0; margin-bottom:10px;">Email</p>
+				<input style='height: 20px; width: 100%;' placeholder='To: ' type='text' />
+				<input style='height: 20px; width: 100%;' placeholder='Subject: ' type='text' />
+				<textarea style='height: 100%; width: 100%;' placeholder='Type your message here...'></textarea>
+			</div>-->
+		{:else}
+			<CodeBlock
+				id={`${id}-${tokenIdx}`}
+				{token}
+				lang={token?.lang ?? ''}
+				code={revertSanitizedResponseContent(token?.text ?? '')}
+			/>
+		{/if}
 	{:else if token.type === 'table'}
 		<table>
 			<thead>

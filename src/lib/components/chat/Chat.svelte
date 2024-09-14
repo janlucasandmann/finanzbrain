@@ -995,7 +995,7 @@
 								if ($settings.notificationEnabled && !document.hasFocus()) {
 									const notification = new Notification(`${model.id}`, {
 										body: responseMessage.content,
-										icon: `${WEBUI_BASE_URL}/static/favicon.png`
+										icon: `${WEBUI_BASE_URL}/favicon.png`
 									});
 								}
 
@@ -1303,7 +1303,7 @@
 				if ($settings.notificationEnabled && !document.hasFocus()) {
 					const notification = new Notification(`${model.id}`, {
 						body: responseMessage.content,
-						icon: `${WEBUI_BASE_URL}/static/favicon.png`
+						icon: `${WEBUI_BASE_URL}/favicon.png`
 					});
 				}
 
@@ -1695,7 +1695,7 @@
 			/>
 
 			<div
-				class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-white to-white/85 dark:from-gray-900 dark:to-[#171717]/90 z-0"
+				class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-white to-white/85 dark:from-gray-900 dark:to-[#012B31]/90 z-0"
 			/>
 		{/if}
 

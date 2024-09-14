@@ -97,9 +97,9 @@
 
 		if (themeToApply === 'dark' && !_theme.includes('oled')) {
 			document.documentElement.style.setProperty('--color-gray-800', '#333');
-			document.documentElement.style.setProperty('--color-gray-850', '#262626');
-			document.documentElement.style.setProperty('--color-gray-900', '#171717');
-			document.documentElement.style.setProperty('--color-gray-950', '#0d0d0d');
+			document.documentElement.style.setProperty('--color-gray-850', 'rgba(255,255,255,0.1)');
+			document.documentElement.style.setProperty('--color-gray-900', '#012B31');
+			document.documentElement.style.setProperty('--color-gray-950', '#001D21');
 		}
 
 		themes

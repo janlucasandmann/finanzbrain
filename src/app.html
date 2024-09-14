@@ -21,6 +21,18 @@
 		</script>
 
 		<script>
+
+			document.addEventListener('click', (e) => {
+				if (e.target.id == "sendmailbutton") {
+					console.log("SEND MAIL BUTTON CLICKED");
+				}
+			});
+
+
+
+		</script>
+
+		<script>
 			// On page load or when changing themes, best to add inline in `head` to avoid FOUC
 			(() => {
 				if (!localStorage?.theme) {

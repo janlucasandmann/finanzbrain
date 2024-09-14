@@ -87,6 +87,9 @@ li p {
 	border-radius: 9999px;
 }
 
+
+
+
 select {
 	background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
 	background-position: right 0.5rem center;
@@ -99,6 +102,52 @@ select {
 	-moz-appearance: none;
 	/* for Chrome */
 	-webkit-appearance: none;
+}
+
+#sidebar {
+	background: #001D21 !important;
+}
+
+.text-gray-700, .max-w-6xl {
+	background: #012B31 !important;
+}
+
+.message-container {
+	background: rgba(255,255,255,0.1) !important;
+}
+.message-container textarea {
+	background: transparent !important;
+}
+
+.bg-gray-900 {
+	background: #012B31 !important;
+}
+
+.bg-gray-850 {
+	background: #012B31 !important;
+}
+
+:is(.dark .dark\:bg-gray-850) {
+	background: #012B31;
+}
+
+:is(.dark .dark\:text-gray-600) {
+	color:rgba(255,255,255,0.5) !important;
+}
+
+:is(.dark .dark\:text-gray-500) {
+	color:rgba(255,255,255,0.75) !important;
+}
+.text-gray-600 {
+	color:rgba(255,255,255,0.5) !important;
+}
+
+/*.s-Fb8Dy0t5csK5 form .s-Fb8Dy0t5csK5 {
+	background:rgba(255,255,255,0.1) !important;
+}*/
+
+button.s-yMfLRP6iRF7l {
+	background:rgba(255,255,255,0.1) !important;
 }
 
 .katex-mathml {
@@ -130,6 +179,49 @@ select {
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
 }
+
+.dark\:text-gray-700:is(.dark *) {
+	color:rgba(255,255,255,0.5) !important;
+}
+
+button.flex.flex-col.flex-1.shrink-0.w-64.justify-between.h-36.p-5.px-6.bg-gray-50.hover\:bg-gray-100.dark\:bg-gray-850.dark\:hover\:bg-gray-800.rounded-3xl.transition.group.s-yMfLRP6iRF7l {
+    border-radius: 10px !important;
+}
+
+.dark\:bg-gray-800:is(.dark *) {
+    background-color: rgba(255,255,255,0.1) !important;
+}
+.dark\:hover\:bg-gray-850:hover:is(.dark *) {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+textarea.w-full.rounded-lg.p-4.text-sm.dark\:text-gray-300.dark\:bg-gray-850.outline-none.resize-none {
+	background: rgba(255,255,255,0.1) !important;
+}
+
+.bg-emerald-700, button.px-3.py-1\.5.text-sm.font-medium.bg-emerald-600.hover\:bg-emerald-700.text-gray-50.transition.rounded-lg, button.bg-gray-900.hover\:bg-gray-850.text-gray-100.dark\:bg-gray-100.dark\:hover\:bg-white.dark\:text-gray-800.font-medium.w-full.py-2\.5.rounded-lg.transition.s-0MpL9HJLJ6fc, button#confirm-edit-message-button {
+    background-color: #fff !important;
+	color: #000 !important;
+}
+
+.flex.scrollbar-none.overflow-x-auto.w-fit.text-center.text-sm.font-medium.rounded-xl.bg-transparent\/10.p-1, .rounded-3xl.max-w-\[90\%\].px-5.py-2.bg-gray-50.dark\:bg-gray-850 {
+	background: rgba(255,255,255,0.1) !important;
+}
+
+input.w-full.px-3.py-2.text-sm.font-medium.bg-gray-50.dark\:bg-gray-850.dark\:text-gray-200.rounded-lg.outline-none {
+	border-radius:0 !important;
+	border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+
+.cm-gutters {
+	background:rgba(0,0,0,0.2) !important;
+}
+
+.cm-editor {
+	background:rgba(0,0,0,0.2) !important;
+}
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

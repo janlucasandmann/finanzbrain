@@ -26,5 +26,14 @@ export default defineConfig({
 	},
 	worker: {
 		format: 'es'
-	}
+	},
+	/*server: {
+		proxy: {
+		  '/ws/socket.io': {
+			target: 'http://localhost:8080', // Backend URL
+			ws: true, // Enable WebSocket proxying
+			changeOrigin: true
+		  }
+		}
+	  }*/
 });

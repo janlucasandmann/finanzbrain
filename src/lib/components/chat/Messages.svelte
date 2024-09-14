@@ -307,7 +307,7 @@
 			}}
 		/>
 	{:else}
-		<div class="w-full pt-2">
+		<div class="w-full pt-2" id="the_chat_container">
 			{#key chatId}
 				{#each messages as message, messageIdx (message.id)}
 					<div class=" w-full {messageIdx === messages.length - 1 ? ' pb-12' : ''}">

@@ -1,29 +1,58 @@
-import json
-import logging
+from sqlalchemy import create_engine, Column, Integer, DateTime, JSON, func
+from contextlib import contextmanager
+
+
 import os
-import shutil
-from datetime import datetime
-from pathlib import Path
-from typing import Generic, Optional, TypeVar
+import sys
+import logging
+import importlib.metadata
+import pkgutil
 from urllib.parse import urlparse
+from datetime import datetime
 
 import chromadb
-import requests
-import yaml
-from open_webui.apps.webui.internal.db import Base, get_db
 from chromadb import Settings
-from open_webui.env import (
-    OPEN_WEBUI_DIR,
-    DATA_DIR,
+from typing import TypeVar, Generic
+from pydantic import BaseModel
+from typing import Optional
+
+from pathlib import Path
+import json
+import yaml
+
+import requests
+import shutil
+
+
+from apps.webui.internal.db import Base, get_db
+
+from constants import ERROR_MESSAGES
+
+from env import (
     ENV,
+    VERSION,
+    SAFE_MODE,
+    GLOBAL_LOG_LEVEL,
+    SRC_LOG_LEVELS,
+    BASE_DIR,
+    DATA_DIR,
+    BACKEND_DIR,
     FRONTEND_BUILD_DIR,
-    WEBUI_AUTH,
-    WEBUI_FAVICON_URL,
     WEBUI_NAME,
+    WEBUI_URL,
+    WEBUI_FAVICON_URL,
+    WEBUI_BUILD_HASH,
+    CONFIG_DATA,
+    DATABASE_URL,
+    CHANGELOG,
+    WEBUI_AUTH,
+    WEBUI_AUTH_TRUSTED_EMAIL_HEADER,
+    WEBUI_AUTH_TRUSTED_NAME_HEADER,
+    WEBUI_SECRET_KEY,
+    WEBUI_SESSION_COOKIE_SAME_SITE,
+    WEBUI_SESSION_COOKIE_SECURE,
     log,
 )
-from pydantic import BaseModel
-from sqlalchemy import JSON, Column, DateTime, Integer, func
 
 
 class EndpointFilter(logging.Filter):
@@ -43,15 +72,10 @@ logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
 def run_migrations():
     print("Running migrations")
     try:
-        from alembic import command
         from alembic.config import Config
+        from alembic import command
 
-        alembic_cfg = Config(OPEN_WEBUI_DIR / "alembic.ini")
-
-        # Set the script location dynamically
-        migrations_path = OPEN_WEBUI_DIR / "migrations"
-        alembic_cfg.set_main_option("script_location", str(migrations_path))
-
+        alembic_cfg = Config("alembic.ini")
         command.upgrade(alembic_cfg, "head")
     except Exception as e:
         print(f"Error: {e}")
@@ -94,18 +118,20 @@ if os.path.exists(f"{DATA_DIR}/config.json"):
     save_to_db(data)
     os.rename(f"{DATA_DIR}/config.json", f"{DATA_DIR}/old_config.json")
 
+
+def save_config():
+    try:
+        with open(f"{DATA_DIR}/config.json", "w") as f:
+            json.dump(CONFIG_DATA, f, indent="\t")
+    except Exception as e:
+        log.exception(e)
+
+
 DEFAULT_CONFIG = {
     "version": 0,
     "ui": {
         "default_locale": "",
         "prompt_suggestions": [
-            {
-                "title": [
-                    "Melde einen Unfallschaden",
-                    "für mein Auto",
-                ],
-                "content": "Melde einen Unfallschaden für mein Auto.",
-            },
             {
                 "title": [
                     "Melde einen Unfallschaden",
@@ -166,25 +192,6 @@ def get_config_value(config_path: str):
     return cur_config
 
 
-PERSISTENT_CONFIG_REGISTRY = []
-
-
-def save_config(config):
-    global CONFIG_DATA
-    global PERSISTENT_CONFIG_REGISTRY
-    try:
-        save_to_db(config)
-        CONFIG_DATA = config
-
-        # Trigger updates on all registered PersistentConfig entries
-        for config_item in PERSISTENT_CONFIG_REGISTRY:
-            config_item.update()
-    except Exception as e:
-        log.exception(e)
-        return False
-    return True
-
-
 T = TypeVar("T")
 
 
@@ -199,8 +206,6 @@ class PersistentConfig(Generic[T]):
             self.value = self.config_value
         else:
             self.value = env_value
-
-        PERSISTENT_CONFIG_REGISTRY.append(self)
 
     def __str__(self):
         return str(self.value)
@@ -217,12 +222,6 @@ class PersistentConfig(Generic[T]):
                 "PersistentConfig object cannot be converted to dict, use config_get or .value instead."
             )
         return super().__getattribute__(item)
-
-    def update(self):
-        new_value = get_config_value(self.config_path)
-        if new_value is not None:
-            self.value = new_value
-            log.info(f"Updated {self.env_name} to new value {self.value}")
 
     def save(self):
         log.info(f"Saving '{self.env_name}' to the database")
@@ -434,7 +433,7 @@ load_oauth_providers()
 # Static DIR
 ####################################
 
-STATIC_DIR = Path(os.getenv("STATIC_DIR", OPEN_WEBUI_DIR / "static")).resolve()
+STATIC_DIR = Path(os.getenv("STATIC_DIR", BACKEND_DIR / "static")).resolve()
 
 frontend_favicon = FRONTEND_BUILD_DIR / "static" / "favicon.png"
 
@@ -715,6 +714,13 @@ DEFAULT_PROMPT_SUGGESTIONS = PersistentConfig(
     "DEFAULT_PROMPT_SUGGESTIONS",
     "ui.prompt_suggestions",
     [
+       {
+                "title": [
+                    "Melde einen Unfallschaden",
+                    "für mein Auto",
+                ],
+                "content": "Melde einen Unfallschaden für mein Auto.",
+            },
         {
                 "title": [
                     "Melde einen Unfallschaden",
@@ -722,27 +728,31 @@ DEFAULT_PROMPT_SUGGESTIONS = PersistentConfig(
                 ],
                 "content": "Melde einen Unfallschaden für mein Auto.",
             },
-            {
+        {
                 "title": [
                     "Melde einen Unfallschaden",
                     "für mein Auto",
                 ],
                 "content": "Melde einen Unfallschaden für mein Auto.",
             },
-            {
+        {
                 "title": [
                     "Melde einen Unfallschaden",
                     "für mein Auto",
                 ],
                 "content": "Melde einen Unfallschaden für mein Auto.",
             },
-            {
-                "title": [
-                    "Melde einen Unfallschaden",
-                    "für mein Auto",
-                ],
-                "content": "Melde einen Unfallschaden für mein Auto.",
-            },
+        {
+            "title": [
+                "Explain options trading",
+                "if I'm familiar with buying and selling stocks",
+            ],
+            "content": "Explain options trading in simple terms if I'm familiar with buying and selling stocks.",
+        },
+        {
+            "title": ["Overcome procrastination", "give me tips"],
+            "content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?",
+        },
     ],
 )
 
@@ -898,27 +908,53 @@ TASK_MODEL_EXTERNAL = PersistentConfig(
 TITLE_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
     "TITLE_GENERATION_PROMPT_TEMPLATE",
     "task.title.prompt_template",
-    os.environ.get("TITLE_GENERATION_PROMPT_TEMPLATE", ""),
-)
+    os.environ.get(
+        "TITLE_GENERATION_PROMPT_TEMPLATE",
+        """Create a concise, 3-5 word title with an emoji as a title for the prompt in the given language. Suitable Emojis for the summary can be used to enhance understanding but avoid quotation marks or special formatting. RESPOND ONLY WITH THE TITLE TEXT.
 
-ENABLE_SEARCH_QUERY = PersistentConfig(
-    "ENABLE_SEARCH_QUERY",
-    "task.search.enable",
-    os.environ.get("ENABLE_SEARCH_QUERY", "True").lower() == "true",
+Examples of titles:
+📉 Stock Market Trends
+🍪 Perfect Chocolate Chip Recipe
+Evolution of Music Streaming
+Remote Work Productivity Tips
+Artificial Intelligence in Healthcare
+🎮 Video Game Development Insights
+
+Prompt: {{prompt:middletruncate:8000}}""",
+    ),
 )
 
 
 SEARCH_QUERY_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
     "SEARCH_QUERY_GENERATION_PROMPT_TEMPLATE",
     "task.search.prompt_template",
-    os.environ.get("SEARCH_QUERY_GENERATION_PROMPT_TEMPLATE", ""),
+    os.environ.get(
+        "SEARCH_QUERY_GENERATION_PROMPT_TEMPLATE",
+        """You are tasked with generating web search queries. Give me an appropriate query to answer my question for google search. Answer with only the query. Today is {{CURRENT_DATE}}.
+        
+Question:
+{{prompt:end:4000}}""",
+    ),
 )
 
+SEARCH_QUERY_PROMPT_LENGTH_THRESHOLD = PersistentConfig(
+    "SEARCH_QUERY_PROMPT_LENGTH_THRESHOLD",
+    "task.search.prompt_length_threshold",
+    int(
+        os.environ.get(
+            "SEARCH_QUERY_PROMPT_LENGTH_THRESHOLD",
+            100,
+        )
+    ),
+)
 
 TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE = PersistentConfig(
     "TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE",
     "task.tools.prompt_template",
-    os.environ.get("TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE", ""),
+    os.environ.get(
+        "TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE",
+        """Available Tools: {{TOOLS}}\nReturn an empty string if no tools match the query. If a function tool matches, construct and return a JSON object in the format {\"name\": \"functionName\", \"parameters\": {\"requiredFunctionParamKey\": \"requiredFunctionParamValue\"}} using the appropriate tool and its parameters. Only return the object and limit the response to the JSON object without additional text.""",
+    ),
 )
 
 
@@ -1203,18 +1239,6 @@ TAVILY_API_KEY = PersistentConfig(
     "TAVILY_API_KEY",
     "rag.web.search.tavily_api_key",
     os.getenv("TAVILY_API_KEY", ""),
-)
-
-SEARCHAPI_API_KEY = PersistentConfig(
-    "SEARCHAPI_API_KEY",
-    "rag.web.search.searchapi_api_key",
-    os.getenv("SEARCHAPI_API_KEY", ""),
-)
-
-SEARCHAPI_ENGINE = PersistentConfig(
-    "SEARCHAPI_ENGINE",
-    "rag.web.search.searchapi_engine",
-    os.getenv("SEARCHAPI_ENGINE", ""),
 )
 
 RAG_WEB_SEARCH_RESULT_COUNT = PersistentConfig(

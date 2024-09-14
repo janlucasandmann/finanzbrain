@@ -41,6 +41,7 @@
 		id: string;
 		model: string;
 		content: string;
+		content_type?: string;  // Add this line
 		files?: { type: string; url: string }[];
 		timestamp: number;
 		role: string;
@@ -75,6 +76,7 @@
 		};
 		annotation?: { type: string; rating: number };
 	}
+
 
 	export let message: MessageType;
 	export let siblings;
@@ -311,7 +313,7 @@
 	>
 		<ProfileImage
 			src={model?.info?.meta?.profile_image_url ??
-				($i18n.language === 'dg-DG' ? `/doge.png` : `${WEBUI_BASE_URL}/static/favicon.png`)}
+				($i18n.language === 'dg-DG' ? `/doge.png` : `${WEBUI_BASE_URL}/favicon.png`)}
 		/>
 
 		<div class="w-full overflow-hidden pl-1">
@@ -431,9 +433,16 @@
 								{#if message.content === '' && !message.error}
 									<Skeleton />
 								{:else if message.content && message.error !== true}
-									<!-- always show message contents even if there's an error -->
-									<!-- unless message.error === true which is legacy error handling, where the error message is stored in message.content -->
-									<Markdown id={message.id} content={message.content} {model} />
+									<!-- Check content_type -->
+									{#if message.content_type === 'html'}
+										<!-- Render raw HTML -->
+										<div class="html-content">
+											{@html message.content}
+										</div>
+									{:else}
+										<!-- Render as Markdown -->
+										<Markdown id={message.id} content={message.content} {model} />
+									{/if}
 								{/if}
 
 								{#if message.error}
