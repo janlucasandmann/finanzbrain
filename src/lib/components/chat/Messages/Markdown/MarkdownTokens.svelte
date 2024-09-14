@@ -19,7 +19,6 @@
 </script>
 
 <!-- {JSON.stringify(tokens)} -->
-{#if tokens}
 {#each tokens as token, tokenIdx}
 	{#if token.type === 'hr'}
 		<hr />
