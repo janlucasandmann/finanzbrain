@@ -9,6 +9,9 @@
 
 	import Modal from './common/Modal.svelte';
 
+	import { addNewMemory, updateMemoryById } from '$lib/apis/memories';
+
+
 	const i18n = getContext('i18n');
 
 	export let show = false;
@@ -25,9 +28,7 @@
 	<div class="px-5 pt-4 dark:text-gray-300 text-gray-700">
 		<div class="flex justify-between items-start">
 			<div class="text-xl font-semibold">
-				{$i18n.t('What’s New in')}
-				{$WEBUI_NAME}
-				<Confetti x={[-1, -0.25]} y={[0, 0.5]} />
+				
 			</div>
 			<button
 				class="self-center"
@@ -48,69 +49,50 @@
 				</svg>
 			</button>
 		</div>
-		<div class="flex items-center mt-1">
-			<div class="text-sm dark:text-gray-200">{$i18n.t('Release Notes')}</div>
-			<div class="flex self-center w-[1px] h-6 mx-2.5 bg-gray-200 dark:bg-gray-700" />
-			<div class="text-sm dark:text-gray-200">
-				v{WEBUI_VERSION}
-			</div>
-		</div>
+		
 	</div>
 
 	<div class=" w-full p-4 px-5 text-gray-700 dark:text-gray-100">
-		<div class=" overflow-y-scroll max-h-80 scrollbar-hidden">
+		<div class=" overflow-y-scroll max-h-80 scrollbar-hidden" style="margin-top:-40px; padding-top:20px;">
 			<div class="mb-3">
-				{#if changelog}
-					{#each Object.keys(changelog) as version}
-						<div class=" mb-3 pr-2">
+				<div class=" mb-3 pr-2">
 							<div class="font-semibold text-xl mb-1 dark:text-white">
-								v{version} - {changelog[version].date}
+								Willkommen bei Finanzbrain!
 							</div>
+							<p style="margin-bottom:40px">Bevor wir starten, möchten wir dir ein paar Fragen stellen, um dir besser zu helfen.</p>
 
-							<hr class=" dark:border-gray-800 my-2" />
 
-							{#each Object.keys(changelog[version]).filter((section) => section !== 'date') as section}
-								<div class="">
-									<div
-										class="font-semibold uppercase text-xs {section === 'added'
-											? 'text-white bg-blue-600'
-											: section === 'fixed'
-												? 'text-white bg-green-600'
-												: section === 'changed'
-													? 'text-white bg-yellow-600'
-													: section === 'removed'
-														? 'text-white bg-red-600'
-														: ''}  w-fit px-3 rounded-full my-2.5"
-									>
-										{section}
-									</div>
 
-									<div class="my-2.5 px-1.5">
-										{#each Object.keys(changelog[version][section]) as item}
-											<div class="text-sm mb-2">
-												<div class="font-semibold uppercase">
-													{changelog[version][section][item].title}
-												</div>
-												<div class="mb-2 mt-1">{changelog[version][section][item].content}</div>
-											</div>
-										{/each}
-									</div>
-								</div>
-							{/each}
-						</div>
-					{/each}
-				{/if}
+
+							<input id="firstvisitname" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Name" />
+							<input id="firstvisitage" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Alter" />
+							<input id="firstvisitgender" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Geschlecht" />
+
+
+				</div>
 			</div>
 		</div>
 		<div class="flex justify-end pt-3 text-sm font-medium">
 			<button
 				on:click={() => {
+
+					let name = document.getElementById("firstvisitname").value;
+					let age = document.getElementById("firstvisitage").value;
+					let gender = document.getElementById("firstvisitgender").value;
+
+					let content = "Name: " + name + ", Alter: " + age + ", Geschlecht: " + gender;
+
+					addNewMemory(localStorage.token, content).catch((error) => {
+						toast.error(error);
+						return null;
+					});
+
 					localStorage.version = $config.version;
 					show = false;
 				}}
 				class=" px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-gray-100 transition rounded-lg"
 			>
-				<span class="relative">{$i18n.t("Okay, Let's Go!")}</span>
+				<span class="relative">Lass uns starten</span>
 			</button>
 		</div>
 	</div>
