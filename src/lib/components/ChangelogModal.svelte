@@ -65,8 +65,10 @@
 
 
 							<input id="firstvisitname" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Name" />
-							<input id="firstvisitage" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Alter" />
-							<input id="firstvisitgender" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Geschlecht" />
+							<input id="firstvisitbirthday" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Dein Geburtstag" />
+							<input id="firstvisitage" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Deine Adresse" />
+							<input id="firstvisitage" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Deine Email Adresse" />
+							<input id="firstvisitage" style="margin-bottom:10px; color:white; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:0px; width:100%; background:transparent; padding-bottom:10px;" type="text" placeholder="Deine Telefonnummer" />
 
 
 				</div>
@@ -76,11 +78,13 @@
 			<button
 				on:click={() => {
 
-					let name = document.getElementById("firstvisitname").value;
-					let age = document.getElementById("firstvisitage").value;
-					let gender = document.getElementById("firstvisitgender").value;
+					let name = document.getElementById("firstvisitname").value || "Kein Name";
+					let birthday = document.getElementById("firstvisitbirthday").value || "Kein Geburtstag angegeben";
+					let address = document.getElementById("firstvisitaddress").value || "Keine Adresse angegeben";
+					let email = document.getElementById("firstvisitemail").value || "Keine Email Adresse angegeben";
+					let phone = document.getElementById("firstvisitphone").value || "Keine Telefonnummer angegeben";
 
-					let content = "Name: " + name + ", Alter: " + age + ", Geschlecht: " + gender;
+					let content = "Name: " + name + "Geburtstag: " + birthday + "Adresse: " + address + "Email: " + email + "Telefonnummer: " + phone;
 
 					addNewMemory(localStorage.token, content).catch((error) => {
 						toast.error(error);
